@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --background: #F4F2F0;
+  --foreground: #111111;
+  --secondary-bg: #ECE8E4;
+  --secondary-text: #5F5F5F;
+  --border: #CFCAC5;
+  --accent: #DDD5CC;
+  --btn-bg: #111111;
+  --btn-text: #FFFFFF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-secondary-text: var(--secondary-text);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-text: var(--btn-text);
+
+  --font-heading: "Cormorant Garamond", serif;
+  --font-body: "Inter", sans-serif;
+
+  --animate-marquee: marquee 25s linear infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+}
