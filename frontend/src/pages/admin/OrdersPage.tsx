@@ -13,11 +13,7 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     async function fetchOrders() {
       try {
-        const res = await fetchWithAuth(`${apiBase}/orders`, {
-          headers: {
-            'Authorization': `Bearer ${getAuthToken()}`
-          }
-        });
+        const res = await fetchWithAuth(`${apiBase}/orders`);
         if (res.ok) {
           setOrders(await res.json());
         }
@@ -58,8 +54,10 @@ export default function AdminOrdersPage() {
           className="border border-border rounded px-4 py-2 text-sm focus:outline-none focus:border-foreground bg-white sm:w-48"
         >
           <option value="">All Statuses</option>
-          <option value="created">Created</option>
-          <option value="payment_confirmed">Payment Confirmed</option>
+          <option value="pending_payment">Pending Payment</option>
+          <option value="awaiting_verification">Awaiting Verification</option>
+          <option value="payment_verified">Payment Verified</option>
+          <option value="rejected">Rejected</option>
           <option value="processing">Processing</option>
           <option value="shipped">Shipped</option>
           <option value="delivered">Delivered</option>
@@ -76,7 +74,9 @@ export default function AdminOrdersPage() {
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Customer</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium text-right">Total</th>
+                <th className="px-4 py-3 font-medium">Expected Amount</th>
+                <th className="px-4 py-3 font-medium">Details</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-secondary-bg">
@@ -92,15 +92,61 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-1 rounded border border-border bg-secondary-bg text-secondary-text">
-                        {order.status}
+                        {order.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right font-semibold">₹{order.total}</td>
+                    <td className="px-4 py-3 font-semibold text-foreground">
+                      ₹{order.uniquePaymentAmount?.toFixed(2) || order.total}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-secondary-text">
+                      {order.utr && <div>UTR: {order.utr}</div>}
+                      {order.screenshotUrl && <div><a href={order.screenshotUrl} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">View Screenshot</a></div>}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      {order.status === 'awaiting_verification' && (
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={async () => {
+                              try {
+                                const res = await fetchWithAuth(`${apiBase}/admin/orders/${order._id}/approve`, {
+                                  method: 'POST'
+                                });
+                                if (res.ok) {
+                                  setOrders(orders.map(o => o._id === order._id ? { ...o, status: 'payment_verified' } : o));
+                                }
+                              } catch (e) {
+                                console.error(e);
+                              }
+                            }}
+                            className="rounded bg-green-600 px-3 py-1 text-xs font-bold text-white hover:bg-green-700"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const res = await fetchWithAuth(`${apiBase}/admin/orders/${order._id}/reject`, {
+                                  method: 'POST'
+                                });
+                                if (res.ok) {
+                                  setOrders(orders.map(o => o._id === order._id ? { ...o, status: 'rejected' } : o));
+                                }
+                              } catch (e) {
+                                console.error(e);
+                              }
+                            }}
+                            className="rounded bg-red-600 px-3 py-1 text-xs font-bold text-white hover:bg-red-700"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-secondary-text">
+                  <td colSpan={7} className="px-4 py-8 text-center text-secondary-text">
                     No orders found matching your criteria.
                   </td>
                 </tr>

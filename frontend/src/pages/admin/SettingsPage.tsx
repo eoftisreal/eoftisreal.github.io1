@@ -150,6 +150,105 @@ export default function SettingsPage() {
           </label>
         </div>
       </div>
+
+      <div className="rounded-lg bg-white p-6 border border-secondary-bg md:col-span-2">
+        <h2 className="text-lg font-semibold mb-4">Manual UPI Payment Configuration</h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Store UPI ID</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={settings?.upiId || ''}
+                  onChange={(e) => setSettings({ ...settings, upiId: e.target.value })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  placeholder="merchant@upi"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('upiId', settings?.upiId)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Payee Name</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={settings?.payeeName || ''}
+                  onChange={(e) => setSettings({ ...settings, payeeName: e.target.value })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  placeholder="My Store Name"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('payeeName', settings?.payeeName)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">QR Expiry (Minutes)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={settings?.qrExpiryMinutes || 10}
+                  onChange={(e) => setSettings({ ...settings, qrExpiryMinutes: e.target.value })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('qrExpiryMinutes', settings?.qrExpiryMinutes)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Verification Timeout (Minutes)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={settings?.verificationTimeoutMinutes || 60}
+                  onChange={(e) => setSettings({ ...settings, verificationTimeoutMinutes: e.target.value })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('verificationTimeoutMinutes', settings?.verificationTimeoutMinutes)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={settings?.enableUtrSubmission !== false}
+                onChange={(e) => handleUpdateSetting('enableUtrSubmission', e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm font-medium text-slate-700">Enable Customer UTR Submission</span>
+            </label>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={settings?.enableScreenshotUpload !== false}
+                onChange={(e) => handleUpdateSetting('enableScreenshotUpload', e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm font-medium text-slate-700">Enable Customer Screenshot Upload</span>
+            </label>
+          </div>
+        </div>
+      </div>
       </div>
 
       <div className="rounded-lg bg-white p-6 border border-secondary-bg">
