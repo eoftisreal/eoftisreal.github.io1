@@ -42,3 +42,4 @@ next-env.d.ts
 
 # PWA dev-dist
 dev-dist/
+frontend.log
