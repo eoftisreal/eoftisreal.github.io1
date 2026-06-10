@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { getAuthToken } from '@/lib/storage';
+import { fetchWithAuth } from '@/lib/apiClient';
 import { useCartStore } from '@/store/cart';
+import { useNavigate } from 'react-router-dom';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -46,6 +48,7 @@ export default function CheckoutForm() {
   });
 
   const { items, fetchCart } = useCartStore();
+  const navigate = useNavigate();
 
   const isLoggedIn = !!getAuthToken();
 
@@ -169,11 +172,10 @@ export default function CheckoutForm() {
     if (step === steps.length - 1) {
       try {
         setMessage('Processing order...');
-        const res = await fetch(`${apiBase}/checkout/create`, {
+        const res = await fetchWithAuth(`${apiBase}/checkout/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getAuthToken()}`
           },
           body: JSON.stringify({
             shippingAddress: {
@@ -193,9 +195,9 @@ export default function CheckoutForm() {
 
         if (res.ok) {
           setMessage('Order placed successfully!');
-          // Call clear local cart and redirect to orders
+          // Call clear local cart and redirect to order tracking
           useCartStore.getState().clearLocalCart();
-          window.location.href = '/orders';
+          navigate(`/orders/${data.order._id}`);
         } else {
           setMessage(data.message || 'Failed to place order');
         }
@@ -353,10 +355,10 @@ export default function CheckoutForm() {
             <div className="p-4 border border-border rounded-md bg-secondary-bg">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="radio" checked readOnly className="w-4 h-4 text-foreground focus:ring-foreground" />
-                <span className="font-medium text-foreground">Razorpay (Cards, UPI, NetBanking)</span>
+                <span className="font-medium text-foreground">UPI (Manual Verification)</span>
               </label>
               <p className="mt-2 text-sm text-secondary-text ml-7">
-                You will be redirected to the secure Razorpay payment gateway to complete your purchase.
+                You will be provided with a unique UPI QR code after placing the order.
               </p>
             </div>
           </div>

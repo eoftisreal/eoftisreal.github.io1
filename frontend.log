@@ -3,13 +3,10 @@
 > vite
 
 
-  VITE v6.4.3  ready in 433 ms
+  VITE v6.4.3  ready in 573 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: use --host to expose
-1:14:28 AM [vite] (client) page reload dev-dist/registerSW.js
-1:14:30 AM [vite] (client) page reload dev-dist/sw.js
-1:14:30 AM [vite] (client) page reload dev-dist/workbox-7e5eb42b.js
 
 PWA v1.3.0
 mode      generateSW
@@ -17,3 +14,6 @@ precache  2 entries (0.12 KiB)
 files generated
   dev-dist/sw.js
   dev-dist/workbox-7e5eb42b.js
+10:16:45 PM [vite] (client) hmr update /src/pages/OrderDetailPage.tsx, /src/index.css
+10:16:54 PM [vite] (client) page reload src/components/CheckoutForm.tsx
+10:44:23 PM [vite] (client) hmr update /src/pages/admin/OrdersPage.tsx, /src/index.css
