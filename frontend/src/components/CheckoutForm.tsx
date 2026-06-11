@@ -44,7 +44,11 @@ export default function CheckoutForm() {
   const [deliverySettings, setDeliverySettings] = useState({
     enableEmailDelivery: true,
     enableWhatsappDelivery: true,
-    customFeatureIconUrl: ''
+    customFeatureIconUrl: '',
+    enableTax: true,
+    taxPercentage: 18,
+    enableDeliveryCharge: false,
+    deliveryCharge: 0
   });
 
   const { items, fetchCart } = useCartStore();
@@ -63,7 +67,11 @@ export default function CheckoutForm() {
         setDeliverySettings({
           enableEmailDelivery: data.enableEmailDelivery !== false,
           enableWhatsappDelivery: data.enableWhatsappDelivery !== false,
-          customFeatureIconUrl: data.customFeatureIconUrl || ''
+          customFeatureIconUrl: data.customFeatureIconUrl || '',
+          enableTax: data.enableTax !== false,
+          taxPercentage: data.taxPercentage !== undefined ? Number(data.taxPercentage) : 18,
+          enableDeliveryCharge: data.enableDeliveryCharge !== false,
+          deliveryCharge: data.deliveryCharge !== undefined ? Number(data.deliveryCharge) : 0
         });
 
         // Auto-select whatsapp if email is disabled and whatsapp is enabled
@@ -102,6 +110,21 @@ export default function CheckoutForm() {
   const handleChange = (field: keyof CheckoutData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+
+  let tax = 0;
+  if (deliverySettings.enableTax !== false) {
+    tax = Number((discountedSubtotal * (deliverySettings.taxPercentage / 100)).toFixed(2));
+  }
+
+  let dCharge = 0;
+  if (deliverySettings.enableDeliveryCharge !== false) {
+    dCharge = deliverySettings.deliveryCharge;
+  }
+
+  const finalTotal = Number((discountedSubtotal + tax + dCharge).toFixed(2));
 
   async function handleApplyPromo() {
     if (!promoCode) return;
@@ -277,6 +300,35 @@ export default function CheckoutForm() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="space-y-2 mb-6 pt-4 border-t border-slate-200 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-600">Subtotal</span>
+                  <span className="font-semibold text-slate-800">₹{subtotal.toFixed(2)}</span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount</span>
+                    <span className="font-semibold">-₹{discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                {deliverySettings.enableTax !== false && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Tax ({deliverySettings.taxPercentage}%)</span>
+                    <span className="font-semibold text-slate-800">₹{tax.toFixed(2)}</span>
+                  </div>
+                )}
+                {deliverySettings.enableDeliveryCharge !== false && deliverySettings.deliveryCharge > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Delivery Charge</span>
+                    <span className="font-semibold text-slate-800">₹{dCharge.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-2 border-t border-slate-200 text-base">
+                  <span className="font-bold text-slate-800">Total</span>
+                  <span className="font-bold text-slate-800">₹{finalTotal.toFixed(2)}</span>
+                </div>
               </div>
 
               <div className="flex items-center justify-between mb-2 pt-4 border-t border-slate-200">

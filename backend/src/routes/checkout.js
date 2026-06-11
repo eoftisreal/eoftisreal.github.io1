@@ -6,6 +6,7 @@ const Cart = require('../models/Cart');
 const Order = require('../models/Order');
 const Coupon = require('../models/Coupon');
 const OrderStatusHistory = require('../models/OrderStatusHistory');
+const Setting = require('../models/Setting');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ async function generateUniquePaymentAmount(baseTotal) {
 
   while (!isUnique) {
     const fraction = Math.floor(Math.random() * 99) + 1; // 1 to 99
-    uniqueAmount = Number(`${Math.floor(baseTotal)}.${fraction < 10 ? '0' + fraction : fraction}`);
+    uniqueAmount = Number((baseTotal + fraction / 100).toFixed(2));
 
     const existingOrder = await Order.findOne({
       uniquePaymentAmount: uniqueAmount,
@@ -88,8 +89,22 @@ router.post('/create', auth, validate(checkoutSchema), async (req, res, next) =>
     }
 
     const discountedSubtotal = Math.max(0, subtotal - discount);
-    const tax = Number((discountedSubtotal * 0.18).toFixed(2));
-    const total = Number((discountedSubtotal + tax).toFixed(2));
+
+    const settingsDocs = await Setting.find({ key: { $in: ['enableTax', 'taxPercentage', 'enableDeliveryCharge', 'deliveryCharge'] } });
+    const settings = settingsDocs.reduce((acc, s) => ({ ...acc, [s.key]: s.value }), {});
+
+    let tax = 0;
+    if (settings.enableTax !== false) {
+      const taxPercentage = settings.taxPercentage !== undefined ? Number(settings.taxPercentage) : 18;
+      tax = Number((discountedSubtotal * (taxPercentage / 100)).toFixed(2));
+    }
+
+    let deliveryCharge = 0;
+    if (settings.enableDeliveryCharge !== false) {
+      deliveryCharge = settings.deliveryCharge !== undefined ? Number(settings.deliveryCharge) : 0;
+    }
+
+    const total = Number((discountedSubtotal + tax + deliveryCharge).toFixed(2));
 
     const uniquePaymentAmount = await generateUniquePaymentAmount(total);
 
@@ -107,6 +122,7 @@ router.post('/create', auth, validate(checkoutSchema), async (req, res, next) =>
       items,
       subtotal,
       tax,
+      deliveryCharge,
       total,
       uniquePaymentAmount,
       shippingAddress: req.validated.body.shippingAddress,

@@ -28,6 +28,7 @@ const orderSchema = new mongoose.Schema(
     subtotal: { type: Number, required: true },
     discount: { type: Number, default: 0 },
     tax: { type: Number, required: true },
+    deliveryCharge: { type: Number, default: 0 },
     total: { type: Number, required: true },
     currency: { type: String, default: 'INR' },
     promoCode: { type: String },

@@ -251,6 +251,73 @@ export default function SettingsPage() {
       </div>
       </div>
 
+      <div className="rounded-lg bg-white p-6 border border-secondary-bg md:col-span-2">
+        <h2 className="text-lg font-semibold mb-4">Pricing Configuration</h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-slate-800">Tax Settings</h3>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={settings?.enableTax !== false}
+                onChange={(e) => handleUpdateSetting('enableTax', e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm font-medium text-slate-700">Enable Tax</span>
+            </label>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tax Percentage (%)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={settings?.taxPercentage ?? 18}
+                  onChange={(e) => setSettings({ ...settings, taxPercentage: Number(e.target.value) })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  placeholder="18"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('taxPercentage', settings?.taxPercentage)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-slate-800">Delivery Charge Settings</h3>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={settings?.enableDeliveryCharge !== false}
+                onChange={(e) => handleUpdateSetting('enableDeliveryCharge', e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm font-medium text-slate-700">Enable Delivery Charge</span>
+            </label>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Delivery Charge Amount (₹)</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={settings?.deliveryCharge ?? 0}
+                  onChange={(e) => setSettings({ ...settings, deliveryCharge: Number(e.target.value) })}
+                  className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+                  placeholder="0"
+                />
+                <button
+                  onClick={() => handleUpdateSetting('deliveryCharge', settings?.deliveryCharge)}
+                  className="rounded bg-foreground px-4 py-2 text-sm font-bold text-white hover:bg-foreground/90"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="rounded-lg bg-white p-6 border border-secondary-bg">
         <h2 className="text-lg font-semibold mb-4">Other Configuration</h2>
         <pre className="bg-slate-50 p-4 rounded text-sm overflow-x-auto text-slate-700">
