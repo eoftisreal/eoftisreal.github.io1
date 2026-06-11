@@ -5,6 +5,8 @@ import { apiGet, Product } from '@/lib/api';
 import AddToCartButton from '@/components/AddToCartButton';
 import { X, Check } from 'lucide-react';
 import { getAuthToken } from '@/lib/storage';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -132,7 +134,11 @@ export default function ProductDetailPage() {
           </div>
         )}
         <p className="text-2xl font-bold">₹{product.price}</p>
-        <p className="whitespace-pre-wrap">{product.description}</p>
+        <div className="prose prose-sm prose-slate max-w-none prose-headings:font-heading prose-headings:font-bold prose-a:text-blue-600">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {product.description}
+          </ReactMarkdown>
+        </div>
         <p className="text-sm text-slate-500">Stock: {product.stock}</p>
 
         {product.minDeliveryDays && product.maxDeliveryDays && (
