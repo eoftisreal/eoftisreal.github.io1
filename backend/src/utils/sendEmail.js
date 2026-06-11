@@ -29,30 +29,85 @@ async function sendEmail({ from, to, subject, html }) {
   }
 }
 
+const STORE_NAME = "Kapda Kraft";
+const LOGO_URL = "https://pub-8c7eefa9a8044a569bef9e3d0b743d59.r2.dev/web%20logo.png";
+
+function generateEmailTemplate(title, message, buttonText, buttonUrl, expirationNotice = "") {
+  return `
+    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; color: #333333;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <img src="${LOGO_URL}" alt="${STORE_NAME}" style="max-height: 50px; object-fit: contain;" />
+      </div>
+
+      <div style="background-color: #f9f9f9; padding: 40px; border-radius: 8px; text-align: center; border: 1px solid #eeeeee;">
+        <h1 style="margin-top: 0; color: #111111; font-size: 24px;">${title}</h1>
+        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 30px; color: #555555;">
+          ${message}
+        </p>
+
+        <a href="${buttonUrl}" style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 14px 28px; font-weight: bold; border-radius: 4px; font-size: 16px;">
+          ${buttonText}
+        </a>
+
+        ${expirationNotice ? `<p style="margin-top: 30px; font-size: 13px; color: #888888;">${expirationNotice}</p>` : ''}
+      </div>
+
+      <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #999999;">
+        <p>If you did not request this email, you can safely ignore it.</p>
+        <p>&copy; ${new Date().getFullYear()} ${STORE_NAME}. All rights reserved.</p>
+      </div>
+    </div>
+  `;
+}
+
 async function sendVerificationEmail(email, verifyUrl) {
+  const html = generateEmailTemplate(
+    "Verify your account",
+    `Welcome to ${STORE_NAME}! To complete your registration and secure your account, please verify your email address by clicking the button below.`,
+    "Verify Email",
+    verifyUrl,
+    "This verification link will expire in 24 hours."
+  );
+
   return sendEmail({
     from: env.emailFromAuth,
     to: email,
-    subject: 'Verify your account',
-    html: `<h1>Verify Email</h1><a href="${verifyUrl}">Verify Account</a>`,
+    subject: `Verify your account - ${STORE_NAME}`,
+    html,
   });
 }
 
 async function sendMagicLinkEmail(email, magicUrl) {
+  const html = generateEmailTemplate(
+    "Your Login Link",
+    `Welcome back to ${STORE_NAME}! Click the button below to securely log into your account without a password.`,
+    "Log In Now",
+    magicUrl,
+    "This magic link will expire in 15 minutes and can only be used once."
+  );
+
   return sendEmail({
     from: env.emailFromAuth,
     to: email,
-    subject: 'Login Link',
-    html: `<a href="${magicUrl}">Login</a>`,
+    subject: `Login to ${STORE_NAME}`,
+    html,
   });
 }
 
 async function sendPasswordResetEmail(email, resetUrl) {
+  const html = generateEmailTemplate(
+    "Reset Password",
+    "We received a request to reset your password. If you made this request, please click the button below to set a new password.",
+    "Reset Password",
+    resetUrl,
+    "This password reset link will expire in 1 hour."
+  );
+
   return sendEmail({
     from: env.emailFromAuth,
     to: email,
-    subject: 'Reset Password',
-    html: `<a href="${resetUrl}">Reset Password</a>`,
+    subject: `Reset your password - ${STORE_NAME}`,
+    html,
   });
 }
 
@@ -66,8 +121,11 @@ async function sendOrderConfirmationEmail(order, userEmail) {
   `).join('');
 
   const html = `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1 style="color: #333;">Order Confirmation</h1>
+    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; color: #333333;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <img src="${LOGO_URL}" alt="${STORE_NAME}" style="max-height: 50px; object-fit: contain;" />
+      </div>
+      <h1 style="color: #111111; font-size: 24px; text-align: center;">Order Confirmation</h1>
       <p>Thank you for your order! Your order ID is <strong>#${order._id.toString().slice(-6)}</strong>.</p>
 
       <h2 style="color: #555; margin-top: 30px;">Shipping Details</h2>
