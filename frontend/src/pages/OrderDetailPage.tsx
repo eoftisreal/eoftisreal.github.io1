@@ -250,9 +250,22 @@ function OrderTrackingContent() {
         </div>
       )}
 
-      <p className="rounded-md bg-white p-4 border border-secondary-bg">Current status: <strong>{order.status.replace('_', ' ').toUpperCase()}</strong></p>
+      <div className="space-y-4">
+        <p className="rounded-md bg-white p-4 border border-secondary-bg">
+          Current status: <strong>{order.status.replace('_', ' ').toUpperCase()}</strong>
+        </p>
 
-      <div className="space-y-2">
+        {order.status === 'payment_verified' && (
+          <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md shadow-sm flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="text-sm font-medium">Payment successful. A confirmation email has been sent for your order.</p>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-2 mt-6">
         {order.timeline.map((event, index) => (
           <article key={`${event.status}-${index}`} className="rounded-md bg-white p-4 border border-secondary-bg">
             <p className="font-bold capitalize">{event.status.replace('_', ' ')}</p>

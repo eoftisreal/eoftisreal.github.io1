@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Setting = require('../models/Setting');
 const OrderStatusHistory = require('../models/OrderStatusHistory');
 const { getAdminSettings } = require('../utils/admin');
+const { sendOrderConfirmationEmail } = require('../utils/sendEmail');
 
 const router = express.Router();
 
@@ -167,7 +168,7 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
 
 router.post('/orders/:id/approve', async (req, res, next) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate('userId', 'email');
     if (!order) {
       const err = new Error('Order not found');
       err.statusCode = 404;
@@ -193,6 +194,12 @@ router.post('/orders/:id/approve', async (req, res, next) => {
       changedBy: req.user.id,
       note: 'Admin approved payment'
     });
+
+    // Send order confirmation email asynchronously
+    const targetEmail = order.guestEmail || (order.userId && order.userId.email);
+    if (targetEmail) {
+      sendOrderConfirmationEmail(order, targetEmail).catch(console.error);
+    }
 
     res.json(order);
   } catch (error) {

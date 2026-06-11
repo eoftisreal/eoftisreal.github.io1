@@ -147,12 +147,6 @@ router.post('/create', auth, validate(checkoutSchema), async (req, res, next) =>
 
     await Cart.findOneAndUpdate({ userId: req.user.id }, { $set: { items: [] } });
 
-    // Send order confirmation email asynchronously
-    const user = await User.findById(req.user.id);
-    if (user && user.email) {
-      sendOrderConfirmationEmail(order, user.email).catch(console.error);
-    }
-
     res.status(201).json({ order });
   } catch (error) {
     next(error);
