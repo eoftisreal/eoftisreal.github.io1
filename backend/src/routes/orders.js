@@ -12,8 +12,8 @@ const router = express.Router();
 router.get('/', auth, async (req, res, next) => {
   try {
     const orders = req.user.isAdmin
-      ? await Order.find().sort({ createdAt: -1 })
-      : await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
+      ? await Order.find().populate('userId', 'email').sort({ createdAt: -1 })
+      : await Order.find({ userId: req.user.id }).populate('userId', 'email').sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (error) {

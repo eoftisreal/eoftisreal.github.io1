@@ -196,9 +196,24 @@ router.post('/orders/:id/approve', async (req, res, next) => {
     });
 
     // Send order confirmation email asynchronously
-    const targetEmail = order.guestEmail || (order.userId && order.userId.email);
+    let targetEmail = order.guestEmail;
+    if (!targetEmail && order.userId) {
+      if (typeof order.userId === 'object' && order.userId.email) {
+        targetEmail = order.userId.email;
+      } else {
+        const user = await User.findById(order.userId);
+        if (user) {
+          targetEmail = user.email;
+        }
+      }
+    }
+
     if (targetEmail) {
-      sendOrderConfirmationEmail(order, targetEmail).catch(console.error);
+      try {
+        await sendOrderConfirmationEmail(order, targetEmail);
+      } catch (err) {
+        console.error('Failed to send order confirmation email:', err);
+      }
     }
 
     res.json(order);
