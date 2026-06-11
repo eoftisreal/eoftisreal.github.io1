@@ -4,11 +4,18 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getAuthToken } from '@/lib/storage';
 
+type OrderItem = {
+  title: string;
+  quantity: number;
+  unitPrice: number;
+};
+
 type Order = {
   _id: string;
   status: string;
   total: number;
   createdAt: string;
+  items: OrderItem[];
 };
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
@@ -60,6 +67,18 @@ export default function OrdersPage() {
             <p className="font-bold">Order #{order._id.slice(-6)}</p>
             <p className="text-sm text-slate-600">Status: {order.status}</p>
             <p className="text-sm text-slate-600">Total: ₹{order.total}</p>
+            {order.items && order.items.length > 0 && (
+              <div className="mt-3 mb-3 border-t border-slate-100 pt-2">
+                <p className="text-xs font-semibold text-slate-500 mb-1">Products:</p>
+                <ul className="text-sm space-y-1">
+                  {order.items.map((item, idx) => (
+                    <li key={idx} className="text-slate-700">
+                      {item.quantity}x {item.title}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <Link to={`/orders/${order._id}`} className="mt-2 inline-block rounded border px-3 py-1 text-sm">Track Order</Link>
           </article>
         ))}

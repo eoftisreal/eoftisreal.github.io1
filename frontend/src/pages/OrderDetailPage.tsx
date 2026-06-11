@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { fetchWithAuth } from '@/lib/apiClient';
+import { getAuthToken } from '@/lib/storage';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -34,6 +35,8 @@ function OrderTrackingContent() {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [utr, setUtr] = useState('');
   const [screenshotUrl, setScreenshotUrl] = useState('');
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState('');
   const [paymentDoneLoading, setPaymentDoneLoading] = useState(false);
 
   async function fetchOrder() {
@@ -94,12 +97,39 @@ function OrderTrackingContent() {
   const handlePaymentDone = async () => {
     setPaymentDoneLoading(true);
     try {
+      let finalScreenshotUrl = screenshotUrl;
+
+      // Upload the file if a new file was selected
+      if (screenshotFile) {
+        const formData = new FormData();
+        formData.append('file', screenshotFile);
+
+        // We use the custom upload endpoint since we just need to host the image
+        const token = getAuthToken();
+        const uploadRes = await fetch(`${apiBase}/products/upload-custom`, {
+          method: 'POST',
+          headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const errData = await uploadRes.json();
+          alert(`Image upload failed: ${errData.message}`);
+          setPaymentDoneLoading(false);
+          return;
+        }
+
+        const uploadData = await uploadRes.json();
+        finalScreenshotUrl = uploadData.url;
+        setScreenshotUrl(finalScreenshotUrl);
+      }
+
       const res = await fetchWithAuth(`${apiBase}/orders/${id}/payment-done`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ utr, screenshotUrl })
+        body: JSON.stringify({ utr, screenshotUrl: finalScreenshotUrl })
       });
       if (res.ok) {
         fetchOrder();
@@ -110,6 +140,15 @@ function OrderTrackingContent() {
       alert('An error occurred.');
     } finally {
       setPaymentDoneLoading(false);
+    }
+  };
+
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setScreenshotFile(file);
+      setScreenshotPreview(URL.createObjectURL(file));
+      setScreenshotUrl(''); // clear direct url if any
     }
   };
 
@@ -168,8 +207,20 @@ function OrderTrackingContent() {
                 )}
                 {qrSettings.enableScreenshotUpload && (
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Payment Screenshot URL</label>
-                    <input type="text" value={screenshotUrl} onChange={e => setScreenshotUrl(e.target.value)} className="w-full rounded border border-slate-300 px-3 py-2 text-sm" placeholder="https://..." />
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Upload Payment Screenshot</label>
+                    <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:bg-slate-50 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleScreenshotChange}
+                        className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-foreground file:text-white hover:file:bg-black cursor-pointer w-full"
+                      />
+                    </div>
+                    {screenshotPreview && (
+                       <div className="mt-2">
+                         <img src={screenshotPreview} alt="Screenshot Preview" className="h-32 object-contain rounded border border-slate-200" />
+                       </div>
+                    )}
                   </div>
                 )}
               </div>

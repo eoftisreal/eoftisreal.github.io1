@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { apiGet, Product } from '@/lib/api';
 import AddToCartButton from '@/components/AddToCartButton';
 import { X, Check } from 'lucide-react';
+import { getAuthToken } from '@/lib/storage';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -73,8 +74,10 @@ export default function ProductDetailPage() {
     formData.append('file', customImageFile);
 
     try {
+      const token = getAuthToken();
       const res = await fetch(`${apiBase}/products/upload-custom`, {
         method: 'POST',
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
         body: formData,
       });
       const data = await res.json();
