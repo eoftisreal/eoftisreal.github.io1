@@ -132,7 +132,7 @@ export default function ProductDetailPage() {
           </div>
         )}
         <p className="text-2xl font-bold">₹{product.price}</p>
-        <p>{product.description}</p>
+        <p className="whitespace-pre-wrap">{product.description}</p>
         <p className="text-sm text-slate-500">Stock: {product.stock}</p>
 
         {product.minDeliveryDays && product.maxDeliveryDays && (

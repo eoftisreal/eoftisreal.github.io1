@@ -257,7 +257,7 @@ function OrderTrackingContent() {
           <article key={`${event.status}-${index}`} className="rounded-md bg-white p-4 border border-secondary-bg">
             <p className="font-bold capitalize">{event.status.replace('_', ' ')}</p>
             {event.note ? <p className="text-sm text-slate-600">{event.note}</p> : null}
-            <p className="text-xs text-slate-400 mt-1">{new Date(event.at).toLocaleString()}</p>
+            <p className="text-xs text-slate-400 mt-1">{new Date(event.at).toLocaleString('en-GB')}</p>
           </article>
         ))}
       </div>

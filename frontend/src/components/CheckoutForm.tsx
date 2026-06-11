@@ -407,7 +407,7 @@ export default function CheckoutForm() {
             <div className="p-4 border border-border rounded-md bg-secondary-bg">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="radio" checked readOnly className="w-4 h-4 text-foreground focus:ring-foreground" />
-                <span className="font-medium text-foreground">UPI (Manual Verification)</span>
+                <span className="font-medium text-foreground">UPI</span>
               </label>
               <p className="mt-2 text-sm text-secondary-text ml-7">
                 You will be provided with a unique UPI QR code after placing the order.

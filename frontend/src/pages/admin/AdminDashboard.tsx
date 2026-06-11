@@ -121,10 +121,7 @@ export default function AdminDashboard() {
                       }}
                     ></div>
                     <p className="text-[10px] text-secondary-text mt-2 whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                      {new Date(item.date).toLocaleDateString(undefined, {
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(item.date).toLocaleDateString('en-GB')}
                     </p>
                     {/* Tooltip */}
                     <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 bg-foreground text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10 transition-opacity">

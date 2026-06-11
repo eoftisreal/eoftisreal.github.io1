@@ -84,7 +84,7 @@ export default function AdminOrdersPage() {
                   <tr key={order._id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 font-medium">#{order._id.slice(-6)}</td>
                     <td className="px-4 py-3 text-secondary-text">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {new Date(order.createdAt).toLocaleDateString('en-GB')}
                     </td>
                     <td className="px-4 py-3 text-secondary-text">
                       {order.guestEmail || (order.userId && order.userId.email) || 'N/A'}
