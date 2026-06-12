@@ -179,10 +179,46 @@ export default function AdminOrdersPage() {
                               </div>
                             );
                           })}
+
+                        </div>
+
+                        <div className="mt-6 flex items-center gap-3 border-t border-slate-200 pt-4">
+                          <span className="text-xs font-semibold text-slate-500">Change Status:</span>
+                          <select
+                            value={order.status}
+                            onChange={async (e) => {
+                              const newStatus = e.target.value;
+                              try {
+                                const res = await fetchWithAuth(`${apiBase}/admin/orders/${order._id}/status`, {
+                                  method: 'PUT',
+                                  headers: {
+                                    'Content-Type': 'application/json'
+                                  },
+                                  body: JSON.stringify({ status: newStatus })
+                                });
+                                if (res.ok) {
+                                  setOrders(orders.map(o => o._id === order._id ? { ...o, status: newStatus } : o));
+                                }
+                              } catch (err) {
+                                console.error('Failed to update status', err);
+                              }
+                            }}
+                            className="border border-border rounded px-2 py-1 text-sm focus:outline-none focus:border-foreground bg-white"
+                          >
+                            <option value="pending_payment">Pending Payment</option>
+                            <option value="awaiting_verification">Awaiting Verification</option>
+                            <option value="payment_verified">Payment Verified</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="rejected">Rejected</option>
+                          </select>
                         </div>
                       </td>
                     </tr>
                   )}
+
                   </Fragment>
                 ))
               ) : (

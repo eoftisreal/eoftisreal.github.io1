@@ -257,4 +257,53 @@ router.post('/orders/:id/reject', async (req, res, next) => {
   }
 });
 
+
+router.put('/orders/:id/status', async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = [
+      'pending_payment',
+      'awaiting_verification',
+      'payment_verified',
+      'rejected',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled'
+    ];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const oldStatus = order.status;
+
+    // Don't do anything if the status is the same
+    if (oldStatus === status) {
+      return res.json(order);
+    }
+
+    order.status = status;
+    order.timeline.push({ status, note: `Status updated to ${status} by admin` });
+    await order.save();
+
+    await OrderStatusHistory.create({
+      orderId: order._id,
+      oldStatus,
+      newStatus: status,
+      changedBy: req.user.id,
+      note: `Admin changed status from ${oldStatus} to ${status}`
+    });
+
+    res.json(order);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
