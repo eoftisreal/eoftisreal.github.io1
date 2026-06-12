@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect, FormEvent } from 'react';
 import { apiGet } from '@/lib/api';
 import { getAuthToken } from '@/lib/storage';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -262,8 +264,10 @@ export default function AdminProductEditPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea required value={description} onChange={e => setDescription(e.target.value)} rows={4} className="mt-1 w-full rounded border px-3 py-2" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <div className="bg-white rounded overflow-hidden prose-sm">
+              <ReactQuill theme="snow" value={description} onChange={setDescription} />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
