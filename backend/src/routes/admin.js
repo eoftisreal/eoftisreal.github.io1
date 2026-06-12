@@ -166,7 +166,7 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
   }
 });
 
-router.post('/orders/:id/approve', masterAdminOnly, async (req, res, next) => {
+router.post('/orders/:id/approve', async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id).populate('userId', 'email');
     if (!order) {
@@ -222,7 +222,7 @@ router.post('/orders/:id/approve', masterAdminOnly, async (req, res, next) => {
   }
 });
 
-router.post('/orders/:id/reject', masterAdminOnly, async (req, res, next) => {
+router.post('/orders/:id/reject', async (req, res, next) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) {
@@ -305,7 +305,14 @@ router.put('/orders/:id/status', async (req, res, next) => {
     }
 
     order.status = status;
-    order.timeline.push({ status, note: `Status updated to ${status} by admin` });
+
+    let note;
+    if (['processing', 'shipped', 'delivered'].includes(status)) {
+      note = `Order status updated to ${status}`;
+    } else {
+      note = `Status updated to ${status} by admin`;
+    }
+    order.timeline.push({ status, note });
     await order.save();
 
     await OrderStatusHistory.create({

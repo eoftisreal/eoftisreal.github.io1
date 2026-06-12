@@ -125,7 +125,7 @@ export default function AdminOrdersPage() {
                       {order.screenshotUrl && <div><a href={order.screenshotUrl} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">View Screenshot</a></div>}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {order.status === 'awaiting_verification' && isMasterAdmin && (
+                      {order.status === 'awaiting_verification' && (
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={async () => {
