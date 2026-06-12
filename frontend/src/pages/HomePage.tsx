@@ -45,17 +45,17 @@ export default function Home() {
         {heroBannerUrl ? (
           <div className="absolute inset-0 z-0">
             <img src={heroBannerUrl} alt="Hero Banner" className="w-full h-full object-cover object-center" loading="eager" fetchPriority="high" />
-            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="absolute inset-0 bg-black/40"></div>
           </div>
         ) : (
           <div className="absolute inset-0 z-0 bg-accent/30"></div>
         )}
         <div className="relative z-10 text-center max-w-2xl px-2 sm:px-4 flex flex-col items-center">
           <h1 className="text-2xl sm:text-3xl md:text-6xl font-heading text-foreground mb-2 md:mb-6 leading-tight">
-            {heroBannerUrl ? <span className="text-white">Discover the Art of Style</span> : "Discover the Art of Style"}
+            {heroBannerUrl ? <span className="text-white drop-shadow-md">Discover the Art of Style</span> : "Discover the Art of Style"}
           </h1>
           <p className="text-[10px] sm:text-xs md:text-base text-secondary-text mb-4 md:mb-8 max-w-md mx-auto px-4">
-            {heroBannerUrl ? <span className="text-white/90">Explore our latest collection of curated pieces designed for the modern aesthetic.</span> : "Explore our latest collection of curated pieces designed for the modern aesthetic."}
+            {heroBannerUrl ? <span className="text-white/90 drop-shadow-md">Explore our latest collection of curated pieces designed for the modern aesthetic.</span> : "Explore our latest collection of curated pieces designed for the modern aesthetic."}
           </p>
           <Link to="/products" className="inline-block border border-foreground bg-btn-bg text-btn-text px-4 py-1.5 md:px-10 md:py-3 text-[9px] md:text-sm tracking-widest uppercase transition-colors hover:bg-transparent hover:text-foreground">
             Shop Collection
@@ -77,10 +77,10 @@ export default function Home() {
                 <>
                   <div className="absolute inset-0 z-0">
                     <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-black/10 transition-opacity group-hover:bg-black/30"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent transition-opacity group-hover:from-black/80 group-hover:via-black/40"></div>
                   </div>
-                  <div className="relative z-10 p-4 md:p-6">
-                    <p className="text-[9px] md:text-[10px] tracking-widest uppercase text-white/80 mb-1 md:mb-2">{category.description || 'Collection'}</p>
+                  <div className="relative z-10 p-4 md:p-6 drop-shadow-md">
+                    <p className="text-[9px] md:text-[10px] tracking-widest uppercase text-white/90 mb-1 md:mb-2">{category.description || 'Collection'}</p>
                     <p className="text-lg md:text-xl font-heading text-white">{category.name}</p>
                   </div>
                 </>
