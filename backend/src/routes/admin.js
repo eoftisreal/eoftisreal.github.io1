@@ -146,6 +146,7 @@ router.put('/users/:id/role', masterAdminOnly, async (req, res, next) => {
 });
 
 const { uploadToR2, getObjectUrl, isR2Configured } = require('../utils/r2');
+const { optimizeImage } = require('../utils/imageOptimizer');
 
 router.post('/upload', upload.single('file'), async (req, res, next) => {
   try {
@@ -157,7 +158,23 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
       return res.status(500).json({ message: 'Storage is not configured on the server. Image upload is disabled.' });
     }
 
-    const key = await uploadToR2(req.file.buffer, req.file.mimetype, req.file.originalname);
+    let bufferToUpload = req.file.buffer;
+    let mimeType = req.file.mimetype;
+    let originalName = req.file.originalname;
+
+    if (mimeType.startsWith('image/')) {
+      try {
+        const optimized = await optimizeImage(req.file.buffer);
+        bufferToUpload = optimized.buffer;
+        mimeType = optimized.mimeType;
+        // Replace extension in original name with .webp for R2 key generation
+        originalName = originalName.replace(/\.[^/.]+$/, "") + ".webp";
+      } catch (err) {
+        console.warn('Image optimization failed, falling back to original image:', err);
+      }
+    }
+
+    const key = await uploadToR2(bufferToUpload, mimeType, originalName);
     const url = getObjectUrl(key);
 
     res.json({ key, url });

@@ -45,7 +45,7 @@ export default function Home() {
         {heroBannerUrl ? (
           <div className="absolute inset-0 z-0">
             <img src={heroBannerUrl} alt="Hero Banner" className="w-full h-full object-cover object-center" loading="eager" fetchPriority="high" />
-            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute inset-0 bg-black/20"></div>
           </div>
         ) : (
           <div className="absolute inset-0 z-0 bg-accent/30"></div>
