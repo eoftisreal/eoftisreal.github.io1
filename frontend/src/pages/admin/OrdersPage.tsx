@@ -1,6 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
 import { fetchWithAuth } from '@/lib/apiClient';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 
 import { getAuthToken } from '@/lib/storage';
 function parseJwt(token: string) {
@@ -22,17 +22,18 @@ export default function AdminOrdersPage() {
   const isMasterAdmin = payload?.role === 'master_admin';
 
 
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const res = await fetchWithAuth(`${apiBase}/orders`);
-        if (res.ok) {
-          setOrders(await res.json());
-        }
-      } catch (e) {
-        console.error('Failed to fetch orders', e);
+  async function fetchOrders() {
+    try {
+      const res = await fetchWithAuth(`${apiBase}/orders`);
+      if (res.ok) {
+        setOrders(await res.json());
       }
+    } catch (e) {
+      console.error('Failed to fetch orders', e);
     }
+  }
+
+  useEffect(() => {
     fetchOrders();
   }, []);
 
@@ -47,7 +48,16 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-black">Manage Orders</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-black">Manage Orders</h1>
+        <button
+          onClick={fetchOrders}
+          className="flex items-center gap-2 rounded bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Refresh
+        </button>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-md border border-secondary-bg">
         <div className="relative flex-1">

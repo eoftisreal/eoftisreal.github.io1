@@ -3,7 +3,7 @@
 > vite
 
 
-  VITE v6.4.3  ready in 573 ms
+  VITE v6.4.3  ready in 409 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: use --host to expose
@@ -14,7 +14,7 @@ precache  2 entries (0.12 KiB)
 files generated
   dev-dist/sw.js
   dev-dist/workbox-7e5eb42b.js
-10:16:45 PM [vite] (client) hmr update /src/pages/OrderDetailPage.tsx, /src/index.css
-10:16:54 PM [vite] (client) page reload src/components/CheckoutForm.tsx
-10:44:23 PM [vite] (client) hmr update /src/pages/admin/OrdersPage.tsx, /src/index.css
-11:01:55 PM [vite] (client) hmr update /src/pages/admin/OrdersPage.tsx, /src/index.css
+11:43:23 PM [vite] (client) page reload src/pages/OrderDetailPage.tsx_patch.cjs
+11:43:23 PM [vite] (client) page reload src/pages/OrderDetailPage.tsx_patch.js
+11:43:23 PM [vite] (client) page reload src/pages/OrderDetailPage.tsx_patch2.cjs
+11:43:23 PM [vite] (client) page reload src/pages/admin/OrdersPage.tsx_patch.cjs

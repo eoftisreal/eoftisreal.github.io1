@@ -170,7 +170,7 @@ router.post('/:id/payment-done', auth, validate(paymentDoneSchema), async (req, 
     if (req.validated.body.utr) order.utr = req.validated.body.utr;
     if (req.validated.body.screenshotUrl) order.screenshotUrl = req.validated.body.screenshotUrl;
 
-    order.timeline.push({ status: 'awaiting_verification', note: 'Customer confirmed payment and awaiting admin verification' });
+    order.timeline.push({ status: 'awaiting_verification', note: 'Payment verification in process' });
     await order.save();
 
     await OrderStatusHistory.create({

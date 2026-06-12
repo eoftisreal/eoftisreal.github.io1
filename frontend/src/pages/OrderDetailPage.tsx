@@ -156,6 +156,48 @@ function OrderTrackingContent() {
     return <p className="rounded-md bg-white p-6 border border-secondary-bg">Loading order...</p>;
   }
 
+
+  const orderFlow = ['pending_payment', 'awaiting_verification', 'payment_verified', 'processing', 'shipped', 'delivered'];
+  const cancelledFlow = ['cancelled'];
+  const rejectedFlow = ['rejected'];
+
+  const getFlowIndex = (status: string) => orderFlow.indexOf(status);
+
+  const renderProgressBar = () => {
+    if (!order || cancelledFlow.includes(order.status) || rejectedFlow.includes(order.status)) return null;
+
+    const currentIndex = order ? getFlowIndex(order.status) : -1;
+    // If status is not in the normal flow, don't show the bar
+    if (currentIndex === -1) return null;
+
+    return (
+      <div className="mb-8 mt-4 overflow-x-auto">
+        <div className="flex items-center min-w-max">
+          {orderFlow.map((s, idx) => {
+            const isCompleted = idx <= currentIndex;
+            const isLast = idx === orderFlow.length - 1;
+
+            return (
+              <div key={s} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isCompleted ? 'bg-foreground text-white' : 'bg-slate-200 text-slate-500'}`}>
+                    {idx + 1}
+                  </div>
+                  <span className={`text-xs mt-2 font-medium capitalize ${isCompleted ? 'text-foreground' : 'text-slate-400'}`}>
+                    {s.replace('_', ' ')}
+                  </span>
+                </div>
+                {!isLast && (
+                  <div className={`w-16 sm:w-24 h-1 mx-2 ${idx < currentIndex ? 'bg-foreground' : 'bg-slate-200'}`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   if (!order) {
     return <p className="rounded-md bg-white p-6 border border-secondary-bg">Order not found.</p>;
   }
@@ -250,6 +292,8 @@ function OrderTrackingContent() {
         </div>
       )}
 
+
+      {renderProgressBar()}
       <div className="space-y-4">
         <p className="rounded-md bg-white p-4 border border-secondary-bg">
           Current status: <strong>{order.status.replace('_', ' ').toUpperCase()}</strong>
