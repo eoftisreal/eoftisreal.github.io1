@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { fetchWithAuth } from '@/lib/apiClient';
-import { Search } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -8,6 +8,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchOrders() {
@@ -69,6 +70,7 @@ export default function AdminOrdersPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-secondary-bg">
               <tr>
+                <th className="w-10 px-4 py-3"></th>
                 <th className="px-4 py-3 font-medium">Order ID</th>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Customer</th>
@@ -81,8 +83,17 @@ export default function AdminOrdersPage() {
             <tbody className="divide-y divide-secondary-bg">
               {filteredOrders.length > 0 ? (
                 filteredOrders.map(order => (
-                  <tr key={order._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 font-medium">#{order._id.slice(-6)}</td>
+                  <Fragment key={order._id}>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => setExpandedRowId(expandedRowId === order._id ? null : order._id)}
+                          className="text-slate-400 hover:text-slate-600 focus:outline-none"
+                        >
+                          {expandedRowId === order._id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 font-medium">#{order._id.slice(-6)}</td>
                     <td className="px-4 py-3 text-secondary-text">
                       {new Date(order.createdAt).toLocaleDateString('en-GB')}
                     </td>
@@ -142,10 +153,41 @@ export default function AdminOrdersPage() {
                       )}
                     </td>
                   </tr>
+                  {expandedRowId === order._id && order.items && order.items.length > 0 && (
+                    <tr className="bg-slate-50 border-t border-slate-100">
+                      <td colSpan={8} className="px-10 py-4">
+                        <div className="text-xs font-semibold text-slate-500 mb-2">Order Items:</div>
+                        <div className="space-y-3">
+                          {order.items.map((item: any, idx: number) => {
+                            const imageUrl = item.image || (typeof item.productId === 'object' && item.productId?.images?.[0]) || '';
+                            return (
+                              <div key={idx} className="flex items-center gap-4">
+                                <div className="flex gap-2 shrink-0 bg-white rounded border border-slate-200 p-1">
+                                  {imageUrl && (
+                                    <img src={imageUrl} alt={item.title} className="h-16 w-16 object-cover rounded" />
+                                  )}
+                                  {item.customImage && (
+                                    <img src={item.customImage} alt="Custom upload" className="h-16 w-16 object-contain bg-slate-100 rounded border border-dashed border-slate-300" />
+                                  )}
+                                </div>
+                                <div>
+                                  <div className="font-semibold text-slate-800">{item.title}</div>
+                                  <div className="text-slate-500 mt-1">
+                                    Qty: {item.quantity} &times; ₹{item.unitPrice} = <span className="font-medium text-slate-700">₹{item.quantity * item.unitPrice}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-secondary-text">
+                  <td colSpan={8} className="px-4 py-8 text-center text-secondary-text">
                     No orders found matching your criteria.
                   </td>
                 </tr>

@@ -12,8 +12,8 @@ const router = express.Router();
 router.get('/', auth, async (req, res, next) => {
   try {
     const orders = req.user.isAdmin
-      ? await Order.find().populate('userId', 'email').sort({ createdAt: -1 })
-      : await Order.find({ userId: req.user.id }).populate('userId', 'email').sort({ createdAt: -1 });
+      ? await Order.find().populate('userId', 'email').populate('items.productId', 'images').sort({ createdAt: -1 })
+      : await Order.find({ userId: req.user.id }).populate('userId', 'email').populate('items.productId', 'images').sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (error) {
@@ -24,7 +24,7 @@ router.get('/', auth, async (req, res, next) => {
 router.get('/:id', auth, async (req, res, next) => {
   try {
     const query = req.user.isAdmin ? { _id: req.params.id } : { _id: req.params.id, userId: req.user.id };
-    const order = await Order.findOne(query);
+    const order = await Order.findOne(query).populate('items.productId', 'images');
     if (!order) {
       const err = new Error('Order not found');
       err.statusCode = 404;
@@ -44,7 +44,7 @@ const trackGuestSchema = z.object({
 
 router.get('/guest/track/:id', validate(trackGuestSchema), async (req, res, next) => {
   try {
-    const order = await Order.findOne({ _id: req.validated.params.id, guestEmail: req.validated.query.email });
+    const order = await Order.findOne({ _id: req.validated.params.id, guestEmail: req.validated.query.email }).populate('items.productId', 'images');
     if (!order) {
       const err = new Error('Guest order not found');
       err.statusCode = 404;
