@@ -154,7 +154,7 @@ async function sendOrderConfirmationEmail(order, userEmail) {
   `;
 
   return sendEmail({
-    from: env.emailFrom,
+    from: env.emailFromOrders,
     to: userEmail,
     subject: `Order Confirmation - #${order._id.toString().slice(-6)}`,
     html,
