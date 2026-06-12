@@ -280,15 +280,15 @@ export default function CheckoutForm() {
               <div className="space-y-3 mb-6">
                 {items.map((item) => (
                   <div key={item.productId} className="flex items-center gap-3">
-                    <div className="flex gap-1 shrink-0 bg-white rounded border border-slate-200 p-0.5">
+                    <div className="flex gap-2 shrink-0 bg-white rounded border border-slate-200 p-1">
                       {item.image && (
-                        <img src={item.image} alt={item.title} className="h-12 w-12 object-cover rounded" />
+                        <img src={item.image} alt={item.title} className="h-20 w-20 object-cover rounded" />
                       )}
                       {item.customImage && (
-                        <img src={item.customImage} alt="Custom upload" className="h-12 w-12 object-contain bg-slate-100 rounded border border-dashed border-slate-300" />
+                        <img src={item.customImage} alt="Custom upload" className="h-20 w-20 object-contain bg-slate-100 rounded border border-dashed border-slate-300" />
                       )}
                       {item.customImage && deliverySettings.customFeatureIconUrl && (
-                        <img src={deliverySettings.customFeatureIconUrl} alt="Custom feature" className="h-12 w-12 object-contain bg-slate-100 rounded border border-slate-200" title="Custom Design" />
+                        <img src={deliverySettings.customFeatureIconUrl} alt="Custom feature" className="h-20 w-20 object-contain bg-slate-100 rounded border border-slate-200" title="Custom Design" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">

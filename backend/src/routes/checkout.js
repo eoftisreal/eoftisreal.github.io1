@@ -115,6 +115,7 @@ router.post('/create', auth, validate(checkoutSchema), async (req, res, next) =>
       title: item.productId.title,
       quantity: item.quantity,
       unitPrice: item.productId.price,
+      image: item.productId.images?.[0] || '',
       customImage: item.customImage
     }));
 
