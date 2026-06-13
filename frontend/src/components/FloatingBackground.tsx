@@ -112,6 +112,7 @@ export default function FloatingBackground({
   className = '',
 }: FloatingBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
   const [palIdx, setPalIdx] = useState(0);
   const [items, setItems]   = useState<Item[]>([]);
   const [dots,  setDots]    = useState<Dot[]>([]);
@@ -165,6 +166,14 @@ export default function FloatingBackground({
     const handler = () => {
       // Calculate progress across the entire page scrollable height
       const scrollTop = window.scrollY;
+
+      // Update Parallax
+      if (parallaxRef.current && containerRef.current) {
+        const h = containerRef.current.offsetHeight;
+        const shiftY = (scrollTop * 0.3) % h;
+        parallaxRef.current.style.transform = `translateY(-${shiftY}px)`;
+      }
+
       const docHeight = Math.max(
         document.body.scrollHeight,
         document.body.offsetHeight,
@@ -199,7 +208,10 @@ export default function FloatingBackground({
       className={`${baseClasses} ${className}`}
       style={{ background: pal.bg, transition: 'background 1.3s ease' }}
     >
-      {/* Scatter dots */}
+      <div ref={parallaxRef} className="absolute inset-0 w-full h-full will-change-transform">
+        {[0, 1].map((offsetIndex) => (
+          <div key={offsetIndex} className="absolute w-full h-full" style={{ top: `${offsetIndex * 100}%` }}>
+                  {/* Scatter dots */}
       {dots.map((d) => {
         const color = pal.dots[d.colorIdx % pal.dots.length];
         return (
@@ -261,7 +273,9 @@ export default function FloatingBackground({
           </span>
         );
       })}
-
+          </div>
+        ))}
+      </div>
       <style>{`
         @keyframes fb-float {
           0%,100% { transform: translate(-50%,-50%) rotate(var(--r)); }
