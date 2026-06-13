@@ -75,6 +75,7 @@ export default function ProductDetailPage() {
 
     const formData = new FormData();
     formData.append('file', customImageFile);
+    formData.append('folder', 'customers/product-images');
 
     try {
       const token = getAuthToken();

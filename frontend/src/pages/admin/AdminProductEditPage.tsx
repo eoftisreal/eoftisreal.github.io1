@@ -98,6 +98,7 @@ export default function AdminProductEditPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('folder', 'admin/product-images');
 
       const res = await fetchWithAuth(`${apiBase}/admin/upload`, {
         method: 'POST',

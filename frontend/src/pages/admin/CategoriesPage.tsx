@@ -52,6 +52,7 @@ export default function CategoriesPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('folder', 'admin/category-images');
 
       const res = await fetchWithAuth(`${apiBase}/admin/upload`, {
         method: 'POST',
