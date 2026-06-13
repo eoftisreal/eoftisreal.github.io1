@@ -201,7 +201,7 @@ router.post('/orders/:id/approve', async (req, res, next) => {
     const oldStatus = order.status;
     order.status = 'payment_verified';
     order.payment.status = 'captured';
-    order.timeline.push({ status: 'payment_verified', note: 'Payment manually verified by admin' });
+    order.timeline.push({ status: 'payment_verified', note: 'Payment successfully verified' });
     await order.save();
 
     await OrderStatusHistory.create({
