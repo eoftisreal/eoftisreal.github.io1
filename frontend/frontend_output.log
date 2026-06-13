@@ -3,31 +3,31 @@
 > vite
 
 
-  VITE v6.4.3  ready in 390 ms
+  VITE v6.4.3  ready in 1172 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: use --host to expose
-2:50:36 PM [vite] http proxy error: /api/products/categories
+5:07:43 PM [vite] http proxy error: /api/products/categories
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
-2:50:36 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
+5:07:43 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
-2:50:36 PM [vite] http proxy error: /api/public/settings
+5:07:43 PM [vite] http proxy error: /api/public/settings
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
-2:50:36 PM [vite] http proxy error: /api/products/categories
+5:07:43 PM [vite] http proxy error: /api/products/categories
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
-2:50:36 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
+5:07:43 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
-2:50:36 PM [vite] http proxy error: /api/public/settings
+5:07:43 PM [vite] http proxy error: /api/public/settings
 AggregateError [ECONNREFUSED]:
     at internalConnectMultiple (node:net:1134:18)
     at afterConnectMultiple (node:net:1715:7)
@@ -38,3 +38,51 @@ precache  2 entries (0.12 KiB)
 files generated
   dev-dist/sw.js
   dev-dist/workbox-7e5eb42b.js
+5:09:23 PM [vite] http proxy error: /api/products/categories
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:23 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:23 PM [vite] http proxy error: /api/public/settings
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:23 PM [vite] http proxy error: /api/products/categories
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:23 PM [vite] http proxy error: /api/products?isFeatured=true&limit=4
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:23 PM [vite] http proxy error: /api/public/settings
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products/categories
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products/brands
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products?
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products/categories
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products/brands
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+5:09:28 PM [vite] http proxy error: /api/products?
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)

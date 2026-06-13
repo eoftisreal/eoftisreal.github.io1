@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getAuthToken, setAuthToken } from '@/lib/storage';
 import { Toaster } from 'react-hot-toast';
+import FloatingBackground from '@/components/FloatingBackground';
 
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 
@@ -33,7 +34,8 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-foreground antialiased">
+    <div className="min-h-screen text-foreground antialiased relative">
+      <FloatingBackground fixed={true} itemCount={24} dotCount={60} />
       <Toaster position="bottom-center" reverseOrder={true} />
       <Header />
       <main className="mx-auto min-h-[70vh] max-w-6xl px-4 py-8">

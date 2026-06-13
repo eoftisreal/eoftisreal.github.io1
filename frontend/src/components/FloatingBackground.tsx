@@ -5,18 +5,26 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 const PALETTES = [
   {
     bg:     '#F5F0E8',
+    shirts: ['#FFFFFF', '#5BAD7F', '#E86050', '#E8B840', '#4A78B5'],
+    mugs:   ['#E86050', '#E8B840', '#5BAD7F', '#4A78B5'],
     dots:   ['#E86050', '#E8B840', '#5BAD7F', '#4A78B5', '#E86060'],
   },
   {
     bg:     '#EEF2FF',
+    shirts: ['#FFFFFF', '#90B4F7', '#C680E8', '#F48FB1', '#7DC8F7'],
+    mugs:   ['#9575CD', '#5B9DE8', '#F06292', '#7986CB'],
     dots:   ['#7986CB', '#C680E8', '#5B9DE8', '#F48FB1'],
   },
   {
     bg:     '#F0FDF4',
+    shirts: ['#FFFFFF', '#6ECF8B', '#80D0C4', '#C5DF68', '#FFCC80'],
+    mugs:   ['#4DB6AC', '#81C784', '#AED581', '#4FC3F7'],
     dots:   ['#4CAF7D', '#80CBC4', '#AED581', '#4FC3F7'],
   },
   {
     bg:     '#FFF5F0',
+    shirts: ['#FFFFFF', '#FFAB91', '#CE93D8', '#80DEEA', '#F48FB1'],
+    mugs:   ['#FF8A65', '#BA68C8', '#4DD0E1', '#F06292'],
     dots:   ['#FF8A65', '#BA68C8', '#4DD0E1', '#F06292'],
   },
 ] as const;
@@ -69,7 +77,7 @@ function dotSVG(kind: DotKind, color: string, s: number): string {
 // ── Item / Dot data types ─────────────────────────────────────────────────────
 interface Item {
   id: number; type: 'shirt' | 'mug';
-  x: number; y: number;
+  color: string; x: number; y: number;
   sz: number; rot: number; dy: number; dur: number; del: number;
 }
 interface Dot {
@@ -83,8 +91,10 @@ const ITEM_PATTERN: Array<'shirt' | 'mug'> = [
   'shirt','mug','shirt','mug','shirt','shirt','mug','shirt','mug','shirt','mug','shirt','mug','shirt',
 ];
 
-const SHIRT_URL = 'https://pub-8c7eefa9a8044a569bef9e3d0b743d59.r2.dev/HOMEPAGE/WALLPAPER/T-SHIRT.png';
-const MUG_URL = 'https://pub-8c7eefa9a8044a569bef9e3d0b743d59.r2.dev/HOMEPAGE/WALLPAPER/CUP.png';
+const SHIRT_URL = '/T-SHIRT.png';
+const MUG_URL = '/CUP.png';
+
+const SIZES = [60, 90, 120];
 
 // ── Main component ────────────────────────────────────────────────────────────
 interface FloatingBackgroundProps {
@@ -92,18 +102,15 @@ interface FloatingBackgroundProps {
   itemCount?: number;
   /** Scatter symbols. Default 38 */
   dotCount?: number;
-  /** Section height in px. Default 560 */
-  height?: number;
-  /** Pass your hero content as children */
-  children?: React.ReactNode;
+  /** Use as a fixed background for the whole page */
+  fixed?: boolean;
   className?: string;
 }
 
 export default function FloatingBackground({
   itemCount = 14,
   dotCount = 38,
-  height = 560,
-  children,
+  fixed = false,
   className = '',
 }: FloatingBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,9 +125,10 @@ export default function FloatingBackground({
     const newItems: Item[] = itemPts.map((p, i) => ({
       id: i,
       type:  ITEM_PATTERN[i % ITEM_PATTERN.length],
+      color: ITEM_PATTERN[i % ITEM_PATTERN.length] === 'shirt' ? pick(pal.shirts) : pick(pal.mugs),
       x: (p.x / W) * 100,
       y: (p.y / H) * 100,
-      sz:  Math.round(rnd(68, 100)),
+      sz:  pick(SIZES),
       rot: parseFloat(rnd(-13, 13).toFixed(1)),
       dy:  parseFloat(rnd(-16, 16).toFixed(1)),
       dur: parseFloat(rnd(3.5, 7).toFixed(2)),
@@ -159,10 +167,21 @@ export default function FloatingBackground({
   useEffect(() => {
     let last = palIdx;
     const handler = () => {
-      const el = containerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      // Calculate progress across the entire page scrollable height
+      const scrollTop = window.scrollY;
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+      );
+      const winHeight = window.innerHeight;
+
+      const maxScroll = docHeight - winHeight;
+      // If page is not scrollable, default to 0
+      const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+
       const idx = Math.min(PALETTES.length - 1, Math.max(0, Math.floor(progress * PALETTES.length)));
       if (idx !== last) { last = idx; setPalIdx(idx); }
     };
@@ -179,17 +198,21 @@ export default function FloatingBackground({
 
   const pal = PALETTES[palIdx];
 
+  const baseClasses = fixed
+    ? 'fixed inset-0 w-full h-full z-[-1] pointer-events-none'
+    : 'relative overflow-hidden pointer-events-none';
+
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden ${className}`}
-      style={{ height, background: pal.bg, transition: 'background 1.3s ease' }}
+      className={`${baseClasses} ${className}`}
+      style={{ background: pal.bg, transition: 'background 1.3s ease' }}
     >
       {/* Scatter dots */}
       {dots.map((d) => (
         <span
           key={d.id}
-          className="absolute pointer-events-none"
+          className="absolute"
           style={{
             left: `${d.x.toFixed(1)}%`,
             top:  `${d.y.toFixed(1)}%`,
@@ -206,7 +229,7 @@ export default function FloatingBackground({
       {items.map((item) => (
         <span
           key={item.id}
-          className="absolute pointer-events-none"
+          className="absolute"
           style={{
             left: `${item.x.toFixed(1)}%`,
             top:  `${item.y.toFixed(1)}%`,
@@ -216,22 +239,28 @@ export default function FloatingBackground({
             '--r':  `${item.rot}deg`,
             '--dy': `${item.dy}px`,
             width: `${item.sz}px`,
+            height: `${item.sz}px`,
           }}
         >
-          <img
-            src={item.type === 'shirt' ? SHIRT_URL : MUG_URL}
-            alt={item.type}
-            style={{ width: '100%', height: 'auto', display: 'block' }}
+          {/* Using CSS mask to dynamically color the white PNGs */}
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: item.color,
+              maskImage: `url(${item.type === 'shirt' ? SHIRT_URL : MUG_URL})`,
+              WebkitMaskImage: `url(${item.type === 'shirt' ? SHIRT_URL : MUG_URL})`,
+              maskSize: 'contain',
+              WebkitMaskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              WebkitMaskPosition: 'center',
+              transition: 'background-color 1.3s ease',
+            }}
           />
         </span>
       ))}
-
-      {/* Children (hero text, CTA, etc.) */}
-      {children && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
-          {children}
-        </div>
-      )}
 
       <style>{`
         @keyframes fb-float {
